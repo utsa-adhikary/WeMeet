@@ -1,156 +1,175 @@
-import { useState } from "react";
-import Button from "../components/Button.jsx";
-import SiteHeader from "../components/SiteHeader.jsx";
-import VideoIcon from "../components/VideoIcon.jsx";
+import { Link } from "react-router-dom";
+import {
+  ArrowRightIcon,
+  FeatureCameraIcon,
+  PeopleIcon,
+} from "../icons/HomePageIcons.jsx";
 
-export default function SignupPage({ onHome }) {
-  const [submitted, setSubmitted] = useState(false);
-
-  function handleSubmit(event) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
+export default function SignupPage() {
   return (
-    <>
-      <SiteHeader onHome={onHome} signup />
-      <main className="relative grid min-h-[calc(100vh-88px)] place-items-center overflow-hidden bg-[#f7f8f3] px-5 py-9 max-sm:min-h-[calc(100vh-72px)] max-sm:px-3.5 max-sm:py-6.5">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_18%_30%,rgba(223,239,223,0.8),transparent_30%),radial-gradient(ellipse_at_88%_75%,rgba(239,229,209,0.75),transparent_32%)]" />
-        <span
-          aria-hidden="true"
-          className="absolute top-[13%] left-[14%] text-[43px] text-emerald-700/50 max-sm:top-[6%] max-sm:left-[5%] max-sm:text-[30px]"
+    <div className="relative min-h-screen overflow-hidden bg-cream text-ink">
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_12%_35%,rgba(246,227,201,0.64),transparent_35%),radial-gradient(ellipse_at_82%_20%,rgba(228,239,222,0.82),transparent_38%)]"
+      />
+      <header className="relative z-10 mx-auto flex h-16 w-full max-w-6xl items-center justify-between px-5 sm:px-8">
+        <Link
+          aria-label="WeMeet home"
+          className="font-bold tracking-[-0.06em] text-ink text-[22px]"
+          to="/"
         >
-          ✳
-        </span>
-        <span
-          aria-hidden="true"
-          className="absolute right-[15%] bottom-[13%] text-[29px] text-amber-700/50 max-sm:right-[5%] max-sm:bottom-[7%]"
+          WeMeet
+        </Link>
+        <Link
+          className="text-xs font-bold text-slate-600 transition hover:text-brand"
+          to="/"
         >
-          ✦
-        </span>
-        <section
-          aria-labelledby="signup-title"
-          className="relative z-1 w-full max-w-112.5 rounded-2xl border border-slate-200/80 bg-white/95 px-10.5 py-7 shadow-[0_22px_65px_rgba(44,64,51,0.08)] max-sm:px-6 max-sm:py-5.5"
-        >
-          <a
-            className="mb-5.5 inline-flex items-center gap-2 text-[11px] font-semibold text-slate-600 hover:text-brand max-sm:mb-4.25"
-            href="/"
-            onClick={onHome}
-          >
-            <span aria-hidden="true" className="text-base">
-              ←
-            </span>
-            Back
-          </a>
-          {submitted ? (
-            <div
-              aria-live="polite"
-              className="flex min-h-104.5 flex-col items-center justify-center text-center"
-            >
-              <span className="mb-5 grid size-13 place-items-center rounded-full bg-emerald-50 text-[23px] text-brand">
-                ✓
+          Back to home
+        </Link>
+      </header>
+
+      <main className="relative mx-auto grid min-h-[calc(100vh-64px)] max-w-6xl items-center gap-10 px-5 py-10 sm:px-8 lg:grid-cols-[1fr_0.9fr] lg:gap-16 lg:py-14">
+        <section className="mx-auto w-full max-w-xl">
+          <span className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#dce9dc] bg-white/80 px-3.5 py-2 text-[10px] font-bold uppercase tracking-[0.13em] text-brand shadow-sm">
+            <span className="size-1.5 rounded-full bg-[#58a987]" />
+            Good calls start here
+          </span>
+          <h1 className="mb-4 font-[Manrope,ui-sans-serif,system-ui] text-[clamp(2.8rem,6vw,4.5rem)] font-semibold leading-[1.02] tracking-[-0.075em] text-ink">
+            Make room for
+            <br />
+            <span className="text-brand">your people.</span>
+          </h1>
+          <p className="mb-8 max-w-md text-sm leading-7 text-muted sm:text-base">
+            Create an account and bring your friends and family a little closer,
+            wherever life takes you.
+          </p>
+
+          <div className="hidden max-w-md rounded-3xl border border-white bg-white/80 p-5 shadow-[0_18px_50px_rgba(40,70,53,0.08)] sm:block">
+            <div className="mb-5 flex items-center justify-between">
+              <span className="text-[10px] font-bold uppercase tracking-[0.14em] text-slate-500">
+                YOUR PEOPLE, TOGETHER
               </span>
-              <span className="text-[8px] font-bold uppercase tracking-[1.35px] text-brand">
-                NICE TO MEET YOU
+              <span className="flex items-center gap-1.5 rounded-full bg-[#e7f2e8] px-2.5 py-1 text-[9px] font-bold text-brand">
+                <span className="size-1.5 rounded-full bg-[#58a987]" />
+                READY WHEN YOU ARE
               </span>
-              <h1
-                className="mb-2 mt-3 font-[Manrope,ui-sans-serif,system-ui] text-[34px] font-semibold tracking-[-1.7px] text-ink"
-                id="signup-title"
-              >
-                You’re on your way.
-              </h1>
-              <p className="mb-6 max-w-75 text-xs leading-relaxed text-muted">
-                Thanks for signing up. Account creation isn’t connected yet, so
-                your details have not been sent anywhere.
-              </p>
-              <Button arrow onClick={onHome}>
-                Back to WeMeet
-              </Button>
             </div>
-          ) : (
-            <>
-              <div className="flex flex-col items-center text-center">
-                <span className="mb-4.25 grid size-10.75 place-items-center rounded-[13px] bg-brand text-white">
-                  <VideoIcon className="size-6.25" />
-                </span>
-                <span className="text-[8px] font-bold uppercase tracking-[1.35px] text-brand">
-                  LET’S MAKE A CONNECTION
-                </span>
-                <h1
-                  className="mb-2 mt-2 font-[Manrope,ui-sans-serif,system-ui] text-[34px] font-semibold tracking-[-1.7px] text-ink"
-                  id="signup-title"
-                >
-                  Join WeMeet.
-                </h1>
-                <p className="mb-5.5 max-w-75 text-xs leading-relaxed text-muted">
-                  Create your account and bring your people a little closer.
+            <div className="flex items-center gap-4 rounded-2xl bg-[#f5f7f1] p-4">
+              <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand text-white">
+                <FeatureCameraIcon />
+              </span>
+              <div className="min-w-0 flex-1">
+                <p className="mb-1 text-sm font-bold text-ink">
+                  Sunday catch-up
+                </p>
+                <p className="mb-0 text-xs text-muted">
+                  A little closer, one call at a time.
                 </p>
               </div>
-              <form className="flex flex-col" onSubmit={handleSubmit}>
-                <label
-                  className="mb-1.75 mt-3.25 text-[11px] font-bold text-slate-700"
-                  htmlFor="full-name"
-                >
-                  Your name
-                </label>
-                <input
-                  autoComplete="name"
-                  className="form-input signup-input"
-                  id="full-name"
-                  name="name"
-                  placeholder="e.g. Alex Morgan"
-                  required
-                />
-                <label
-                  className="mb-1.75 mt-3.25 text-[11px] font-bold text-slate-700"
-                  htmlFor="email"
-                >
-                  Email address
-                </label>
-                <input
-                  autoComplete="email"
-                  className="form-input signup-input"
-                  id="email"
-                  name="email"
-                  placeholder="you@example.com"
-                  required
-                  type="email"
-                />
-                <label
-                  className="mb-1.75 mt-3.25 text-[11px] font-bold text-slate-700"
-                  htmlFor="password"
-                >
-                  Create a password
-                </label>
-                <input
-                  autoComplete="new-password"
-                  className="form-input signup-input"
-                  id="password"
-                  minLength="8"
-                  name="password"
-                  placeholder="At least 8 characters"
-                  required
-                  type="password"
-                />
-                <Button
-                  arrow
-                  className="mt-4.5 w-full"
-                  type="submit"
-                >
-                  Create account
-                </Button>
-                <p className="mb-0 mt-3 text-center text-[9px] leading-relaxed text-slate-500">
-                  Demo form: your information stays in this browser and isn’t
-                  submitted to a server.
-                </p>
-              </form>
-            </>
-          )}
+              <span className="flex -space-x-2">
+                <span className="grid size-8 place-items-center rounded-full border-2 border-[#f5f7f1] bg-[#f2d4ba] text-[9px] font-bold text-[#865440]">
+                  M
+                </span>
+                <span className="grid size-8 place-items-center rounded-full border-2 border-[#f5f7f1] bg-[#d8e6d5] text-[9px] font-bold text-[#416653]">
+                  A
+                </span>
+                <span className="grid size-8 place-items-center rounded-full border-2 border-[#f5f7f1] bg-[#e6d8ed] text-[9px] font-bold text-[#755a83]">
+                  J
+                </span>
+              </span>
+            </div>
+            <div className="mt-4 flex items-center gap-2 text-xs text-muted">
+              <span className="text-brand">
+                <PeopleIcon />
+              </span>
+              Good people. Better together.
+            </div>
+          </div>
         </section>
-        <p className="absolute bottom-4.25 m-0 font-[Manrope,ui-sans-serif,system-ui] text-[10px] font-semibold text-slate-500">
-          Good people. Better together.
-        </p>
+
+        <section
+          aria-labelledby="signup-title"
+          className="mx-auto w-full max-w-md rounded-[28px] border border-[#e9ebe3] bg-white p-6 shadow-[0_24px_70px_rgba(40,70,53,0.1)] sm:p-9"
+        >
+          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand">
+            YOUR NEXT CALL IS CLOSER
+          </span>
+          <h2
+            className="mb-2 mt-3 font-[Manrope,ui-sans-serif,system-ui] text-3xl font-semibold tracking-[-0.06em] text-ink"
+            id="signup-title"
+          >
+            Create your account
+          </h2>
+          <p className="mb-7 text-sm leading-6 text-muted">
+            A few details and you’re ready to catch up.
+          </p>
+
+          <div className="flex flex-col gap-4">
+            <div>
+              <label
+                className="mb-2 block text-xs font-bold text-slate-700"
+                htmlFor="signup-name"
+              >
+                Your name
+              </label>
+              <input
+                autoComplete="name"
+                className="page-input text-sm"
+                id="signup-name"
+                name="name"
+                placeholder="e.g. Alex Morgan"
+                type="text"
+              />
+            </div>
+            <div>
+              <label
+                className="mb-2 block text-xs font-bold text-slate-700"
+                htmlFor="signup-email"
+              >
+                Email address
+              </label>
+              <input
+                autoComplete="email"
+                className="page-input text-sm"
+                id="signup-email"
+                name="email"
+                placeholder="you@example.com"
+                type="email"
+              />
+            </div>
+            <div>
+              <label
+                className="mb-2 block text-xs font-bold text-slate-700"
+                htmlFor="signup-password"
+              >
+                Create a password
+              </label>
+              <input
+                autoComplete="new-password"
+                className="page-input text-sm"
+                id="signup-password"
+                name="password"
+                placeholder="Choose a password"
+                type="password"
+              />
+            </div>
+          </div>
+
+          <button
+            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            type="button"
+          >
+            Create account
+            <ArrowRightIcon />
+          </button>
+          <p className="mb-0 mt-4 text-center text-[11px] leading-5 text-muted">
+            Signup is a preview; account creation isn’t connected yet.
+          </p>
+        </section>
       </main>
-    </>
+      <footer className="relative mx-auto max-w-6xl px-5 pb-6 text-center text-[10px] text-muted sm:px-8">
+        Good people. Better together.
+      </footer>
+    </div>
   );
 }

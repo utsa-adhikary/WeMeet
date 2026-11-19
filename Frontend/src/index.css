@@ -48,6 +48,45 @@ a {
   color: var(--color-slate-400);
 }
 
+.page-input {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 3rem;
+  border: 1px solid var(--color-slate-200);
+  border-radius: 0.75rem;
+  padding-inline: 1rem;
+  background-color: #fbfcf9;
+  color: var(--color-ink);
+  outline: none;
+  transition:
+    border-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 150ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.page-input:focus {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--color-brand) 10%, transparent);
+}
+
+.page-input::placeholder {
+  color: var(--color-slate-400);
+}
+
+.meeting-code-field {
+  min-width: 0;
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+}
+
+.meeting-code-field::placeholder {
+  font-family: var(--font-sans);
+  font-weight: 400;
+  letter-spacing: normal;
+}
+
 .signup-input {
   font-size: 0.75rem;
 }
