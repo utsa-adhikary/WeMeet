@@ -1,18 +1,6 @@
 import Header from "../components/Header.jsx";
 import { Link } from "react-router-dom";
-import {
-  ArrowRightIcon,
-  CallIllustration,
-  DownArrowIcon,
-  FeatureCameraIcon,
-  FeatureStarIcon,
-  HangupIcon,
-  MicrophoneIcon,
-  MoreIcon,
-  PeopleIcon,
-  SparkleIcon,
-  VideoCallIcon,
-} from "../icons/HomePageIcons.jsx";
+import { CallIllustration } from "../icons/HomePageIcons.jsx";
 
 export default function HomePage() {
   function renderCallPreview() {
@@ -50,7 +38,9 @@ export default function HomePage() {
                 Maya · San Diego
               </span>
               <span className="grid size-9 place-items-center rounded-full bg-white/75 text-ink shadow-sm backdrop-blur">
-                <MoreIcon />
+                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                  more_horiz
+                </span>
               </span>
             </div>
             <div className="absolute right-3 bottom-3 left-3 flex items-end justify-between sm:right-4 sm:bottom-4 sm:left-4">
@@ -82,20 +72,28 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="grid size-9 place-items-center rounded-full bg-[#f1f3ed] text-ink">
-                <VideoCallIcon />
+                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                  videocam
+                </span>
               </span>
               <span className="grid size-9 place-items-center rounded-full bg-[#f1f3ed] text-ink">
-                <MicrophoneIcon />
+                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                  mic
+                </span>
               </span>
               <span className="grid size-9 place-items-center rounded-full bg-[#e56d61] text-white shadow-sm">
-                <HangupIcon />
+                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                  call_end
+                </span>
               </span>
             </div>
           </div>
         </div>
         <div className="absolute bottom-0 left-0 flex -rotate-2 items-center gap-2 rounded-full border border-white bg-white px-3.5 py-2.5 shadow-[0_10px_30px_rgba(27,58,47,0.12)] sm:left-0">
           <span className="grid size-7 place-items-center rounded-full bg-[#e7f2e8] text-brand">
-            <SparkleIcon />
+            <span aria-hidden="true" className="material-icons" style={{ fontSize: "14px" }}>
+              auto_awesome
+            </span>
           </span>
           <span className="text-[10px] font-bold text-ink">
             Feels like being there
@@ -115,7 +113,9 @@ export default function HomePage() {
         <div className="flex flex-col gap-6 rounded-3xl border border-[#e5e9df] bg-white/90 p-5 shadow-[0_16px_50px_rgba(40,70,53,0.07)] sm:p-7 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
           <div className="flex items-center gap-4">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#e7f2e8] text-brand">
-              <VideoCallIcon />
+              <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                videocam
+              </span>
             </span>
             <div>
               <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-brand">
@@ -149,7 +149,9 @@ export default function HomePage() {
               type="button"
             >
               Join call
-              <ArrowRightIcon />
+              <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                arrow_forward
+              </span>
             </button>
           </div>
         </div>
@@ -182,7 +184,9 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-3">
           <article className="rounded-3xl border border-[#e9ebe3] bg-white p-6 sm:p-7">
             <span className="mb-5 grid size-11 place-items-center rounded-2xl bg-[#e7f2e8] text-brand">
-              <FeatureCameraIcon />
+              <span aria-hidden="true" className="material-icons" style={{ fontSize: "20px" }}>
+                videocam
+              </span>
             </span>
             <h3 className="mb-2 text-base font-bold tracking-tight text-ink">
               Face-to-face, from anywhere
@@ -194,7 +198,9 @@ export default function HomePage() {
           </article>
           <article className="rounded-3xl border border-[#e9ebe3] bg-white p-6 sm:p-7">
             <span className="mb-5 grid size-11 place-items-center rounded-2xl bg-[#fbefdd] text-[#b77b35]">
-              <PeopleIcon />
+              <span aria-hidden="true" className="material-icons" style={{ fontSize: "20px" }}>
+                groups
+              </span>
             </span>
             <h3 className="mb-2 text-base font-bold tracking-tight text-ink">
               Room for your whole circle
@@ -206,7 +212,9 @@ export default function HomePage() {
           </article>
           <article className="rounded-3xl border border-[#e9ebe3] bg-white p-6 sm:p-7">
             <span className="mb-5 grid size-11 place-items-center rounded-2xl bg-[#f2eaf5] text-[#86639a]">
-              <FeatureStarIcon />
+              <span aria-hidden="true" className="material-icons" style={{ fontSize: "20px" }}>
+                star_outline
+              </span>
             </span>
             <h3 className="mb-2 text-base font-bold tracking-tight text-ink">
               Simple, so you can be present
@@ -250,14 +258,18 @@ export default function HomePage() {
                 to="/signup"
               >
                 Start a call
-                <ArrowRightIcon />
+                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                  arrow_forward
+                </span>
               </Link>
               <Link
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-ink transition hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 to="#how-it-works"
               >
                 How it works
-                <DownArrowIcon />
+                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                  keyboard_arrow_down
+                </span>
               </Link>
             </div>
             <div className="mt-8 flex items-center gap-3 text-xs text-muted">
@@ -312,7 +324,9 @@ export default function HomePage() {
               to="/signup"
             >
               Get started
-              <ArrowRightIcon />
+              <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                arrow_forward
+              </span>
             </Link>
           </div>
         </section>

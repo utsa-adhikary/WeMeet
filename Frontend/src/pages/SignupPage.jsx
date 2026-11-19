@@ -1,9 +1,4 @@
 import { Link } from "react-router-dom";
-import {
-  ArrowRightIcon,
-  FeatureCameraIcon,
-  PeopleIcon,
-} from "../icons/HomePageIcons.jsx";
 
 export default function SignupPage() {
   return (
@@ -56,7 +51,13 @@ export default function SignupPage() {
             </div>
             <div className="flex items-center gap-4 rounded-2xl bg-[#f5f7f1] p-4">
               <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-brand text-white">
-                <FeatureCameraIcon />
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "20px" }}
+                >
+                  videocam
+                </span>
               </span>
               <div className="min-w-0 flex-1">
                 <p className="mb-1 text-sm font-bold text-ink">
@@ -80,7 +81,13 @@ export default function SignupPage() {
             </div>
             <div className="mt-4 flex items-center gap-2 text-xs text-muted">
               <span className="text-brand">
-                <PeopleIcon />
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "20px" }}
+                >
+                  groups
+                </span>
               </span>
               Good people. Better together.
             </div>
@@ -160,7 +167,13 @@ export default function SignupPage() {
             type="button"
           >
             Create account
-            <ArrowRightIcon />
+            <span
+              aria-hidden="true"
+              className="material-icons"
+              style={{ fontSize: "16px" }}
+            >
+              arrow_forward
+            </span>
           </button>
           <p className="mb-0 mt-4 text-center text-[11px] leading-5 text-muted">
             Signup is a preview; account creation isn’t connected yet.
