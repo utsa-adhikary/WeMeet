@@ -175,9 +175,22 @@ export default function HomePage() {
               name="meeting-code"
               placeholder="ABC-123-XYZ"
               type="text"
+              maxLength={11}
               onChange={(e) => {
-                e.target.value = e.target.value.toUpperCase();
-                setUserRoomId(e.target.value);
+                const raw = e.target.value
+                  .toUpperCase()
+                  .replace(/[\s-]+/g, "")
+                  .slice(0, 9);
+
+                let formatted = raw;
+                if (raw.length > 6) {
+                  formatted = `${raw.slice(0, 3)}-${raw.slice(3, 6)}-${raw.slice(6)}`;
+                } else if (raw.length > 3) {
+                  formatted = `${raw.slice(0, 3)}-${raw.slice(3)}`;
+                }
+
+                e.target.value = formatted;
+                setUserRoomId(formatted);
               }}
             />
             <button

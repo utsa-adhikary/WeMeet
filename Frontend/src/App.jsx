@@ -1,8 +1,65 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { useEffect, useState } from "react";
+import {
+  createBrowserRouter,
+  Navigate,
+  RouterProvider,
+  useParams,
+} from "react-router-dom";
+import { Toaster, toast } from "react-hot-toast";
 import HomePage from "./pages/HomePage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import MeetingPreviewPage from "./pages/MeetingPreviewPage.jsx";
-import { Toaster } from "react-hot-toast";
+import { useFetch } from "./hooks/useFetch.jsx";
+
+function ProtectedMeetingRoute() {
+  const { roomId } = useParams();
+  const [status, setStatus] = useState("checking"); // "checking" | "allowed" | "denied"
+
+  useEffect(() => {
+    let active = true;
+
+    async function checkAccess() {
+      if (!roomId) {
+        if (active) setStatus("denied");
+        return;
+      }
+
+      try {
+        const result = await useFetch(`/meeting/${roomId}`, { method: "POST" });
+
+        if (!active) return;
+
+        if (result.success) {
+          setStatus("allowed");
+        } else {
+          toast.error(result.message || "Invalid or unauthorized meeting.");
+          setStatus("denied");
+        }
+      } catch {
+        if (!active) return;
+        toast.error("Could not verify meeting room.");
+        setStatus("denied");
+      }
+    }
+
+    setStatus("checking");
+    checkAccess();
+
+    return () => {
+      active = false;
+    };
+  }, [roomId]);
+
+  if (status === "checking") {
+    return <div className="p-6 text-center">Verifying meeting room...</div>;
+  }
+
+  if (status === "denied") {
+    return <Navigate to="/" replace />;
+  }
+
+  return <MeetingPreviewPage />;
+}
 
 const router = createBrowserRouter([
   {
@@ -11,7 +68,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/meeting/:roomId",
-    element: <MeetingPreviewPage />,
+    element: <ProtectedMeetingRoute />,
   },
   {
     path: "/signup",
@@ -39,24 +96,24 @@ function App() {
           },
           success: {
             style: {
-              background: "#ecfdf5", // Light green background
-              color: "#065f46", // Dark green text
+              background: "#ecfdf5",
+              color: "#065f46",
               border: "1px solid #10b981",
             },
             iconTheme: {
-              primary: "#10b981", // Green checkmark circle
-              secondary: "#ecfdf5", // Checkmark color
+              primary: "#10b981",
+              secondary: "#ecfdf5",
             },
           },
           error: {
             style: {
-              background: "#fef2f2", // Light red background
-              color: "#991b1b", // Dark red text
+              background: "#fef2f2",
+              color: "#991b1b",
               border: "1px solid #ef4444",
             },
             iconTheme: {
-              primary: "#ef4444", // Red X circle
-              secondary: "#fef2f2", // X color
+              primary: "#ef4444",
+              secondary: "#fef2f2",
             },
           },
         }}

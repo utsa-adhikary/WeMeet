@@ -1,69 +1,42 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
+import { useFetch } from "../hooks/useFetch.jsx";
 
 export default function MeetingPreviewPage() {
   const { roomId } = useParams();
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const mountedRef = useRef(true);
-  const [cameraEnabled, setCameraEnabled] = useState(true);
-  const [micEnabled, setMicEnabled] = useState(true);
-  const [mediaReady, setMediaReady] = useState(false);
+  const [cameraEnabled, setCameraEnabled] = useState(false);
+  const [micEnabled, setMicEnabled] = useState(false);
+  const mediaReady =
+    typeof navigator !== "undefined" &&
+    Boolean(navigator.mediaDevices?.getUserMedia);
   const [cameraBusy, setCameraBusy] = useState(false);
   const [micBusy, setMicBusy] = useState(false);
-  const [cameraStatus, setCameraStatus] = useState("Connecting...");
+  const [cameraStatus, setCameraStatus] = useState(() =>
+    typeof navigator !== "undefined" && !navigator.mediaDevices?.getUserMedia
+      ? "Camera unavailable"
+      : "Camera off",
+  );
   const [name, setName] = useState("");
   const [joining, setJoining] = useState(false);
 
   useEffect(() => {
-    let active = true;
     mountedRef.current = true;
 
-    async function startPreview() {
-      if (!navigator.mediaDevices?.getUserMedia) {
-        setCameraStatus("Camera unavailable");
-        setCameraEnabled(false);
-        setMicEnabled(false);
-        setMediaReady(true);
-        return;
-      }
-
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: "user" },
-          audio: true,
-        });
-
-        if (!active) {
-          stream.getTracks().forEach((track) => track.stop());
-          return;
-        }
-
-        streamRef.current = stream;
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-        }
-        setCameraStatus("Camera ready");
-      } catch {
-        if (active) {
-          setCameraStatus("Camera access needed");
-          setCameraEnabled(false);
-          setMicEnabled(false);
-        }
-      } finally {
-        if (active) setMediaReady(true);
-      }
-    }
-
-    startPreview();
-
     return () => {
-      active = false;
       mountedRef.current = false;
       streamRef.current?.getTracks().forEach((track) => track.stop());
     };
   }, []);
+
+  useEffect(() => {
+    if (cameraEnabled && videoRef.current && streamRef.current) {
+      videoRef.current.srcObject = streamRef.current;
+    }
+  }, [cameraEnabled]);
 
   async function toggleCamera() {
     if (cameraEnabled) {
@@ -95,11 +68,12 @@ export default function MeetingPreviewPage() {
       const stream = streamRef.current || new MediaStream();
       deviceStream.getVideoTracks().forEach((track) => stream.addTrack(track));
       streamRef.current = stream;
-      if (videoRef.current) videoRef.current.srcObject = stream;
       setCameraEnabled(true);
       setCameraStatus("Camera ready");
     } catch {
-      toast.error("Could not access your camera. Check your browser permissions.");
+      toast.error(
+        "Could not access your camera. Check your browser permissions.",
+      );
     } finally {
       if (mountedRef.current) setCameraBusy(false);
     }
@@ -236,7 +210,7 @@ export default function MeetingPreviewPage() {
                   muted
                   playsInline
                   ref={videoRef}
-                  className="absolute inset-0 size-full object-cover"
+                  className="absolute inset-0 size-full -scale-x-100 object-cover"
                 />
               ) : (
                 <div className="absolute inset-0 grid place-items-center bg-[linear-gradient(135deg,#dce9dc,#c7d6c5)]">
