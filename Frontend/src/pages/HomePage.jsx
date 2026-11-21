@@ -1,8 +1,16 @@
 import Header from "../components/Header.jsx";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { CallIllustration } from "../icons/HomePageIcons.jsx";
+import { useFetch } from "../hooks/useFetch.jsx";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { validateRoomId } from "../utils/roomFunctions.js";
 
 export default function HomePage() {
+  const navigate = useNavigate();
+
+  const [userRoomId, setUserRoomId] = useState("");
+
   function renderCallPreview() {
     return (
       <div className="relative mx-auto w-full max-w-142.5 px-2 pb-7 sm:px-7">
@@ -38,7 +46,11 @@ export default function HomePage() {
                 Maya · San Diego
               </span>
               <span className="grid size-9 place-items-center rounded-full bg-white/75 text-ink shadow-sm backdrop-blur">
-                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
                   more_horiz
                 </span>
               </span>
@@ -72,17 +84,29 @@ export default function HomePage() {
             </div>
             <div className="flex items-center gap-2">
               <span className="grid size-9 place-items-center rounded-full bg-[#f1f3ed] text-ink">
-                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
                   videocam
                 </span>
               </span>
               <span className="grid size-9 place-items-center rounded-full bg-[#f1f3ed] text-ink">
-                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
                   mic
                 </span>
               </span>
               <span className="grid size-9 place-items-center rounded-full bg-[#e56d61] text-white shadow-sm">
-                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
                   call_end
                 </span>
               </span>
@@ -91,7 +115,11 @@ export default function HomePage() {
         </div>
         <div className="absolute bottom-0 left-0 flex -rotate-2 items-center gap-2 rounded-full border border-white bg-white px-3.5 py-2.5 shadow-[0_10px_30px_rgba(27,58,47,0.12)] sm:left-0">
           <span className="grid size-7 place-items-center rounded-full bg-[#e7f2e8] text-brand">
-            <span aria-hidden="true" className="material-icons" style={{ fontSize: "14px" }}>
+            <span
+              aria-hidden="true"
+              className="material-icons"
+              style={{ fontSize: "14px" }}
+            >
               auto_awesome
             </span>
           </span>
@@ -113,7 +141,11 @@ export default function HomePage() {
         <div className="flex flex-col gap-6 rounded-3xl border border-[#e5e9df] bg-white/90 p-5 shadow-[0_16px_50px_rgba(40,70,53,0.07)] sm:p-7 lg:flex-row lg:items-center lg:justify-between lg:gap-10">
           <div className="flex items-center gap-4">
             <span className="grid size-12 shrink-0 place-items-center rounded-2xl bg-[#e7f2e8] text-brand">
-              <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+              <span
+                aria-hidden="true"
+                className="material-icons"
+                style={{ fontSize: "16px" }}
+              >
                 videocam
               </span>
             </span>
@@ -143,13 +175,22 @@ export default function HomePage() {
               name="meeting-code"
               placeholder="ABC-123-XYZ"
               type="text"
+              onChange={(e) => {
+                e.target.value = e.target.value.toUpperCase();
+                setUserRoomId(e.target.value);
+              }}
             />
             <button
               className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
               type="button"
+              onClick={() => joinRoom(userRoomId)}
             >
               Join call
-              <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+              <span
+                aria-hidden="true"
+                className="material-icons"
+                style={{ fontSize: "16px" }}
+              >
                 arrow_forward
               </span>
             </button>
@@ -184,7 +225,11 @@ export default function HomePage() {
         <div className="grid gap-4 md:grid-cols-3">
           <article className="rounded-3xl border border-[#e9ebe3] bg-white p-6 sm:p-7">
             <span className="mb-5 grid size-11 place-items-center rounded-2xl bg-[#e7f2e8] text-brand">
-              <span aria-hidden="true" className="material-icons" style={{ fontSize: "20px" }}>
+              <span
+                aria-hidden="true"
+                className="material-icons"
+                style={{ fontSize: "20px" }}
+              >
                 videocam
               </span>
             </span>
@@ -198,7 +243,11 @@ export default function HomePage() {
           </article>
           <article className="rounded-3xl border border-[#e9ebe3] bg-white p-6 sm:p-7">
             <span className="mb-5 grid size-11 place-items-center rounded-2xl bg-[#fbefdd] text-[#b77b35]">
-              <span aria-hidden="true" className="material-icons" style={{ fontSize: "20px" }}>
+              <span
+                aria-hidden="true"
+                className="material-icons"
+                style={{ fontSize: "20px" }}
+              >
                 groups
               </span>
             </span>
@@ -212,7 +261,11 @@ export default function HomePage() {
           </article>
           <article className="rounded-3xl border border-[#e9ebe3] bg-white p-6 sm:p-7">
             <span className="mb-5 grid size-11 place-items-center rounded-2xl bg-[#f2eaf5] text-[#86639a]">
-              <span aria-hidden="true" className="material-icons" style={{ fontSize: "20px" }}>
+              <span
+                aria-hidden="true"
+                className="material-icons"
+                style={{ fontSize: "20px" }}
+              >
                 star_outline
               </span>
             </span>
@@ -227,6 +280,35 @@ export default function HomePage() {
         </div>
       </section>
     );
+  }
+
+  async function startCall() {
+    const response = await useFetch("/createmeeting", {
+      method: "POST",
+    });
+
+    if (!response.success) {
+      return console.log("Unable to create meeting. Try again.");
+    }
+
+    const roomId = response.roomId;
+    navigate(`/meeting/${roomId}`);
+  }
+
+  async function joinRoom(userRoomId) {
+    if (!validateRoomId(userRoomId)) {
+      return toast.error("Invalid room Id");
+    }
+
+    const response = await useFetch(`/meeting/${userRoomId}`, {
+      method: "POST",
+    });
+
+    if (!response.success) {
+      return toast.error(response.message);
+    }
+
+    navigate(`/meeting/${response.roomId}`);
   }
 
   return (
@@ -255,10 +337,14 @@ export default function HomePage() {
             <div className="flex flex-wrap items-center gap-3">
               <Link
                 className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.2)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                to="/signup"
+                onClick={() => startCall()}
               >
                 Start a call
-                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
                   arrow_forward
                 </span>
               </Link>
@@ -267,7 +353,11 @@ export default function HomePage() {
                 to="#how-it-works"
               >
                 How it works
-                <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
                   keyboard_arrow_down
                 </span>
               </Link>
@@ -324,7 +414,11 @@ export default function HomePage() {
               to="/signup"
             >
               Get started
-              <span aria-hidden="true" className="material-icons" style={{ fontSize: "16px" }}>
+              <span
+                aria-hidden="true"
+                className="material-icons"
+                style={{ fontSize: "16px" }}
+              >
                 arrow_forward
               </span>
             </Link>

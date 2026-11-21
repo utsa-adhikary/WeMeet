@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const cors = require("cors");
 const {
   validateRoomId,
   findRoom,
@@ -9,6 +10,12 @@ const {
 const PORT = process.env.PORT;
 
 const app = express();
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+  }),
+);
 
 app.post("/createmeeting", (req, res) => {
   let createMeetingResult = createmeeting();
@@ -22,7 +29,8 @@ app.post("/createmeeting", (req, res) => {
   return res.status(200).json({
     success: true,
     message: "meeting created successfully",
-    createMeetingResult,
+    roomId: createMeetingResult.roomId,
+    createdAt: createMeetingResult.createdAt,
   });
 });
 app.post("/meeting/:roomId", (req, res) => {
