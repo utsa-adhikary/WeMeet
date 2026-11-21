@@ -1,6 +1,10 @@
 import { Link } from "react-router-dom";
+import GoogleIcon from "../icons/GoogleIcon.jsx";
 
-export default function SignupPage() {
+export default function SignupPage({ mode = "signup" }) {
+  const isSignIn = mode === "signin";
+  const oppositeMode = isSignIn ? "signup" : "signin";
+
   return (
     <div className="relative min-h-screen overflow-hidden bg-cream text-ink">
       <div
@@ -96,25 +100,54 @@ export default function SignupPage() {
 
         <section
           aria-labelledby="signup-title"
-          className="mx-auto w-full max-w-md rounded-[28px] border border-[#e9ebe3] bg-white p-6 shadow-[0_24px_70px_rgba(40,70,53,0.1)] sm:p-9"
+          className="mx-auto w-full max-w-md rounded-[28px] border border-[#e9ebe3] bg-white p-5 shadow-[0_24px_70px_rgba(40,70,53,0.1)] sm:p-7"
         >
-          <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand">
-            YOUR NEXT CALL IS CLOSER
-          </span>
+          <div className="mb-3 flex items-center justify-between gap-2">
+            <span className="text-[10px] font-bold uppercase tracking-[0.15em] text-brand">
+              {isSignIn ? "WELCOME BACK" : "YOUR NEXT CALL IS CLOSER"}
+            </span>
+            <p className="mb-0 text-[11px] text-muted">
+              {isSignIn ? "New here?" : "Have an account?"}{" "}
+              <Link
+                className="font-bold text-brand underline decoration-brand/30 underline-offset-4 hover:text-brand-dark"
+                to={`/${oppositeMode}`}
+              >
+                {isSignIn ? "Sign up" : "Sign in"}
+              </Link>
+            </p>
+          </div>
           <h2
-            className="mb-2 mt-3 font-[Manrope,ui-sans-serif,system-ui] text-3xl font-semibold tracking-[-0.06em] text-ink"
+            className="mb-1 font-[Manrope,ui-sans-serif,system-ui] text-2xl font-semibold tracking-[-0.06em] text-ink"
             id="signup-title"
           >
-            Create your account
+            {isSignIn ? "Sign in to WeMeet" : "Create your account"}
           </h2>
-          <p className="mb-7 text-sm leading-6 text-muted">
-            A few details and you’re ready to catch up.
+          <p className="mb-5 text-xs leading-5 text-muted">
+            {isSignIn
+              ? "Enter your details and get back to your people."
+              : "A few details and you’re ready to catch up."}
           </p>
 
-          <div className="flex flex-col gap-4">
-            <div>
+          <button
+            className="mb-4 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-5 text-sm font-bold text-ink transition hover:-translate-y-0.5 hover:bg-[#f8faf7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            type="button"
+          >
+            <GoogleIcon />
+            Continue with Google
+          </button>
+
+          <div className="mb-4 flex items-center gap-3">
+            <span className="h-px flex-1 bg-slate-200" />
+            <span className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-400">
+              or
+            </span>
+            <span className="h-px flex-1 bg-slate-200" />
+          </div>
+
+          <div className="flex flex-col gap-3">
+            {!isSignIn && <div>
               <label
-                className="mb-2 block text-xs font-bold text-slate-700"
+                className="mb-1.5 block text-xs font-bold text-slate-700"
                 htmlFor="signup-name"
               >
                 Your name
@@ -127,10 +160,10 @@ export default function SignupPage() {
                 placeholder="e.g. Alex Morgan"
                 type="text"
               />
-            </div>
+            </div>}
             <div>
               <label
-                className="mb-2 block text-xs font-bold text-slate-700"
+                className="mb-1.5 block text-xs font-bold text-slate-700"
                 htmlFor="signup-email"
               >
                 Email address
@@ -146,27 +179,29 @@ export default function SignupPage() {
             </div>
             <div>
               <label
-                className="mb-2 block text-xs font-bold text-slate-700"
+                className="mb-1.5 block text-xs font-bold text-slate-700"
                 htmlFor="signup-password"
               >
-                Create a password
+                {isSignIn ? "Password" : "Create a password"}
               </label>
               <input
-                autoComplete="new-password"
+                autoComplete={isSignIn ? "current-password" : "new-password"}
                 className="page-input text-sm"
                 id="signup-password"
                 name="password"
-                placeholder="Choose a password"
+                placeholder={
+                  isSignIn ? "Enter your password" : "Choose a password"
+                }
                 type="password"
               />
             </div>
           </div>
 
           <button
-            className="mt-6 inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             type="button"
           >
-            Create account
+            {isSignIn ? "Sign in" : "Create account"}
             <span
               aria-hidden="true"
               className="material-icons"
@@ -175,8 +210,8 @@ export default function SignupPage() {
               arrow_forward
             </span>
           </button>
-          <p className="mb-0 mt-4 text-center text-[11px] leading-5 text-muted">
-            Signup is a preview; account creation isn’t connected yet.
+          <p className="mb-0 mt-3 text-center text-[10px] leading-4 text-muted">
+            Preview only; authentication isn’t connected yet.
           </p>
         </section>
       </main>

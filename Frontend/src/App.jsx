@@ -9,7 +9,7 @@ import { Toaster, toast } from "react-hot-toast";
 import HomePage from "./pages/HomePage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import MeetingPreviewPage from "./pages/MeetingPreviewPage.jsx";
-import { useFetch } from "./hooks/useFetch.jsx";
+import { useFetch } from "./utils/useFetch.js";
 
 function ProtectedMeetingRoute() {
   const { roomId } = useParams();
@@ -72,7 +72,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignupPage />,
+    element: <SignupPage mode="signup" />,
+  },
+  {
+    path: "/signin",
+    element: <SignupPage mode="signin" />,
   },
   {
     path: "*",

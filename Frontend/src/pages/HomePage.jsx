@@ -1,7 +1,7 @@
 import Header from "../components/Header.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { CallIllustration } from "../icons/HomePageIcons.jsx";
-import { useFetch } from "../hooks/useFetch.jsx";
+import { useFetch } from "../utils/useFetch.js";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { validateRoomId } from "../utils/roomFunctions.js";

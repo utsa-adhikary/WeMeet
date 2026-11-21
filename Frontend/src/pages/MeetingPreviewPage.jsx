@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
+import { toggleCamera, toggleMic } from "../hooks/streamMedia";
 import toast from "react-hot-toast";
-import { useFetch } from "../hooks/useFetch.jsx";
 
 export default function MeetingPreviewPage() {
   const { roomId } = useParams();
@@ -37,86 +37,6 @@ export default function MeetingPreviewPage() {
       videoRef.current.srcObject = streamRef.current;
     }
   }, [cameraEnabled]);
-
-  async function toggleCamera() {
-    if (cameraEnabled) {
-      streamRef.current?.getVideoTracks().forEach((track) => {
-        track.stop();
-        streamRef.current.removeTrack(track);
-      });
-      setCameraEnabled(false);
-      setCameraStatus("Camera off");
-      return;
-    }
-
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast.error("Camera access is not available in this browser.");
-      return;
-    }
-
-    setCameraBusy(true);
-    try {
-      const deviceStream = await navigator.mediaDevices.getUserMedia({
-        video: { facingMode: "user" },
-        audio: false,
-      });
-      if (!mountedRef.current) {
-        deviceStream.getTracks().forEach((track) => track.stop());
-        return;
-      }
-
-      const stream = streamRef.current || new MediaStream();
-      deviceStream.getVideoTracks().forEach((track) => stream.addTrack(track));
-      streamRef.current = stream;
-      setCameraEnabled(true);
-      setCameraStatus("Camera ready");
-    } catch {
-      toast.error(
-        "Could not access your camera. Check your browser permissions.",
-      );
-    } finally {
-      if (mountedRef.current) setCameraBusy(false);
-    }
-  }
-
-  async function toggleMic() {
-    if (micEnabled) {
-      streamRef.current?.getAudioTracks().forEach((track) => {
-        track.stop();
-        streamRef.current.removeTrack(track);
-      });
-      setMicEnabled(false);
-      return;
-    }
-
-    if (!navigator.mediaDevices?.getUserMedia) {
-      toast.error("Microphone access is not available in this browser.");
-      return;
-    }
-
-    setMicBusy(true);
-    try {
-      const deviceStream = await navigator.mediaDevices.getUserMedia({
-        video: false,
-        audio: true,
-      });
-      if (!mountedRef.current) {
-        deviceStream.getTracks().forEach((track) => track.stop());
-        return;
-      }
-
-      const stream = streamRef.current || new MediaStream();
-      deviceStream.getAudioTracks().forEach((track) => stream.addTrack(track));
-      streamRef.current = stream;
-      setMicEnabled(true);
-    } catch {
-      toast.error(
-        "Could not access your microphone. Check your browser permissions.",
-      );
-    } finally {
-      if (mountedRef.current) setMicBusy(false);
-    }
-  }
 
   async function copyText(text, successMessage) {
     try {
@@ -247,7 +167,16 @@ export default function MeetingPreviewPage() {
                       : "bg-[#e56d61] text-white"
                   } disabled:cursor-wait disabled:opacity-60`}
                   disabled={!mediaReady || cameraBusy}
-                  onClick={toggleCamera}
+                  onClick={() =>
+                    toggleCamera(
+                      cameraEnabled,
+                      setCameraEnabled,
+                      setCameraBusy,
+                      setCameraStatus,
+                      streamRef,
+                      mountedRef,
+                    )
+                  }
                   type="button"
                 >
                   <span
@@ -267,7 +196,15 @@ export default function MeetingPreviewPage() {
                     micEnabled ? "bg-white text-ink" : "bg-[#e56d61] text-white"
                   } disabled:cursor-wait disabled:opacity-60`}
                   disabled={!mediaReady || micBusy}
-                  onClick={toggleMic}
+                  onClick={() =>
+                    toggleMic(
+                      micEnabled,
+                      setMicEnabled,
+                      setMicBusy,
+                      streamRef,
+                      mountedRef,
+                    )
+                  }
                   type="button"
                 >
                   <span
