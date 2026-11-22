@@ -9,7 +9,7 @@ import { Toaster, toast } from "react-hot-toast";
 import HomePage from "./pages/HomePage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import MeetingPreviewPage from "./pages/MeetingPreviewPage.jsx";
-import { useFetch } from "./utils/useFetch.js";
+import { fetchApi } from "./utils/fetchApi.js";
 
 function ProtectedMeetingRoute() {
   const { roomId } = useParams();
@@ -25,7 +25,7 @@ function ProtectedMeetingRoute() {
       }
 
       try {
-        const result = await useFetch(`/api/meeting/id/${roomId}`, { method: "POST" });
+        const result = await fetchApi(`/api/meeting/id/${roomId}`, { method: "POST" });
 
         if (!active) return;
 

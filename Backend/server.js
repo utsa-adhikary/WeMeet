@@ -22,6 +22,8 @@ app.use(
   }),
 );
 
+app.use(express.json()); 
+
 app.use("/api/auth", AuthRoutes);
 app.use("/api/meeting", MeetRoutes);
 

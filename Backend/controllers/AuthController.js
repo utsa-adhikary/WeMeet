@@ -7,9 +7,10 @@ async function registerUser(req, res) {
 
     // 1. Basic presence check before hitting DB validation
     if (!name || !email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Name, email, and password are required" });
+      return res.status(400).json({
+        success: false,
+        message: "Name, email, and password are required",
+      });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -17,7 +18,9 @@ async function registerUser(req, res) {
     // 2. Optional early check for friendly UX (still pair with error code 11000 handling)
     const existingUser = await User.findOne({ email: normalizedEmail });
     if (existingUser) {
-      return res.status(409).json({ message: "Email is already registered" });
+      return res
+        .status(409)
+        .json({ success: false, message: "Email is already registered" });
     }
 
     // 3. Create & save -> runs schema validation + pre("save") password hashing
@@ -31,6 +34,7 @@ async function registerUser(req, res) {
 
     // 4. Omit password from the response payload
     return res.status(201).json({
+      success: true,
       message: "User created successfully",
       user: {
         id: user._id,
@@ -42,17 +46,23 @@ async function registerUser(req, res) {
   } catch (error) {
     // MongoDB duplicate key error (race condition on unique email index)
     if (error.code === 11000) {
-      return res.status(409).json({ message: "Email is already registered" });
+      return res
+        .status(409)
+        .json({ success: false, message: "Email is already registered" });
     }
 
     // Mongoose validation errors (e.g., invalid email format or short password)
     if (error.name === "ValidationError") {
       const messages = Object.values(error.errors).map((err) => err.message);
-      return res.status(400).json({ message: messages.join(", ") });
+      return res
+        .status(400)
+        .json({ success: false, message: messages.join(", ") });
     }
 
     console.error("Error creating user:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 }
 
@@ -66,11 +76,13 @@ async function loginUser(req, res) {
     if (!email || !password) {
       return res
         .status(400)
-        .json({ message: "Email and password are required" });
+        .json({ success: false, message: "Email and password are required" });
     }
 
     if (typeof email !== "string" || typeof password !== "string") {
-      return res.status(400).json({ message: "Invalid input format" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid input format" });
     }
 
     const normalizedEmail = email.toLowerCase().trim();
@@ -82,7 +94,9 @@ async function loginUser(req, res) {
 
     // 3. Use the exact same generic message whether email or password fails
     if (!user || !(await user.comparePassword(password))) {
-      return res.status(401).json({ message: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Invalid email or password" });
     }
 
     // 4. Sign a JWT (adjust expiry and payload to your app's needs)
@@ -100,6 +114,7 @@ async function loginUser(req, res) {
 
     // 5. Return safe user fields only (never include user.password)
     return res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
       user: {
@@ -110,7 +125,9 @@ async function loginUser(req, res) {
     });
   } catch (error) {
     console.error("Error logging in:", error);
-    return res.status(500).json({ message: "Internal server error" });
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
   }
 }
 

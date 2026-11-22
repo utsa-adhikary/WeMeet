@@ -1,7 +1,7 @@
 import Header from "../components/Header.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { CallIllustration } from "../icons/HomePageIcons.jsx";
-import { useFetch } from "../utils/useFetch.js";
+import { fetchApi } from "../utils/fetchApi.js";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { validateRoomId } from "../utils/roomFunctions.js";
@@ -296,32 +296,40 @@ export default function HomePage() {
   }
 
   async function startCall() {
-    const response = await useFetch("/api/meeting/create", {
-      method: "POST",
-    });
+    try {
+      const response = await fetchApi("/api/meeting/create", {
+        method: "POST",
+      });
 
-    if (!response.success) {
-      return console.log("Unable to create meeting. Try again.");
+      if (!response.success) {
+        return console.log("Unable to create meeting. Try again.");
+      }
+
+      const roomId = response.roomId;
+      navigate(`/meeting/${roomId}`);
+    } catch (error) {
+      console.log(error);
     }
-
-    const roomId = response.roomId;
-    navigate(`/meeting/${roomId}`);
   }
 
   async function joinRoom(userRoomId) {
-    if (!validateRoomId(userRoomId)) {
-      return toast.error("Invalid room Id");
+    try {
+      if (!validateRoomId(userRoomId)) {
+        return toast.error("Invalid room Id");
+      }
+
+      const response = await fetchApi(`/api/meeting/id/${userRoomId}`, {
+        method: "POST",
+      });
+
+      if (!response.success) {
+        return toast.error(response.message);
+      }
+
+      navigate(`/meeting/${response.roomId}`);
+    } catch (error) {
+      console.log(error);
     }
-
-    const response = await useFetch(`/api/meeting/id/${userRoomId}`, {
-      method: "POST",
-    });
-
-    if (!response.success) {
-      return toast.error(response.message);
-    }
-
-    navigate(`/meeting/${response.roomId}`);
   }
 
   return (

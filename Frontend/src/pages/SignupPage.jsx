@@ -1,9 +1,37 @@
 import { Link } from "react-router-dom";
 import GoogleIcon from "../icons/GoogleIcon.jsx";
+import { useState } from "react";
+import { fetchApi } from "../utils/fetchApi.js";
+import toast from "react-hot-toast";
 
 export default function SignupPage({ mode = "signup" }) {
   const isSignIn = mode === "signin";
   const oppositeMode = isSignIn ? "signup" : "signin";
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    const endPoint = isSignIn ? "/api/auth/login" : "/api/auth/register";
+
+    try {
+      let bodyObj = { email, password };
+      isSignIn ? "" : (bodyObj.name = name);
+      const response = await fetchApi(endPoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify(bodyObj),
+      });
+      if (!response.success) {
+        return toast.error(response.message);
+      }
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-cream text-ink">
@@ -145,22 +173,27 @@ export default function SignupPage({ mode = "signup" }) {
           </div>
 
           <div className="flex flex-col gap-3">
-            {!isSignIn && <div>
-              <label
-                className="mb-1.5 block text-xs font-bold text-slate-700"
-                htmlFor="signup-name"
-              >
-                Your name
-              </label>
-              <input
-                autoComplete="name"
-                className="page-input text-sm"
-                id="signup-name"
-                name="name"
-                placeholder="e.g. Alex Morgan"
-                type="text"
-              />
-            </div>}
+            {!isSignIn && (
+              <div>
+                <label
+                  className="mb-1.5 block text-xs font-bold text-slate-700"
+                  htmlFor="signup-name"
+                >
+                  Your name
+                </label>
+                <input
+                  autoComplete="name"
+                  className="page-input text-sm"
+                  id="signup-name"
+                  name="name"
+                  placeholder="e.g. Alex Morgan"
+                  type="text"
+                  onChange={(e) => {
+                    setName(e.target.value);
+                  }}
+                />
+              </div>
+            )}
             <div>
               <label
                 className="mb-1.5 block text-xs font-bold text-slate-700"
@@ -175,6 +208,9 @@ export default function SignupPage({ mode = "signup" }) {
                 name="email"
                 placeholder="you@example.com"
                 type="email"
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                }}
               />
             </div>
             <div>
@@ -193,6 +229,9 @@ export default function SignupPage({ mode = "signup" }) {
                   isSignIn ? "Enter your password" : "Choose a password"
                 }
                 type="password"
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                }}
               />
             </div>
           </div>
@@ -200,6 +239,9 @@ export default function SignupPage({ mode = "signup" }) {
           <button
             className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             type="button"
+            onClick={(e) => {
+              handleSubmit(e);
+            }}
           >
             {isSignIn ? "Sign in" : "Create account"}
             <span
