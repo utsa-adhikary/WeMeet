@@ -19,20 +19,20 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "Password is required"],
-      minlength: [4, "Password must be at least 4 characters long"],
-    },
-    role: {
-      type: String,
-      default: "customer",
+      minlength: [8, "Password must be at least 8 characters long"],
+      select: false,
     },
   },
   { timestamps: true }
 );
 
-// Automatically hash password after validation passes, right before saving
 userSchema.pre("save", async function () {
   if (!this.isModified("password")) return;
   this.password = await bcrypt.hash(this.password, 10);
 });
+
+userSchema.methods.comparePassword = function (candidatePassword) {
+  return bcrypt.compare(candidatePassword, this.password);
+};
 
 module.exports = mongoose.model("User", userSchema);

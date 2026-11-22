@@ -296,7 +296,7 @@ export default function HomePage() {
   }
 
   async function startCall() {
-    const response = await useFetch("/createmeeting", {
+    const response = await useFetch("/api/meeting/create", {
       method: "POST",
     });
 
@@ -313,7 +313,7 @@ export default function HomePage() {
       return toast.error("Invalid room Id");
     }
 
-    const response = await useFetch(`/meeting/${userRoomId}`, {
+    const response = await useFetch(`/api/meeting/id/${userRoomId}`, {
       method: "POST",
     });
 

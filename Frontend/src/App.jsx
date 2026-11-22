@@ -25,7 +25,7 @@ function ProtectedMeetingRoute() {
       }
 
       try {
-        const result = await useFetch(`/meeting/${roomId}`, { method: "POST" });
+        const result = await useFetch(`/api/meeting/id/${roomId}`, { method: "POST" });
 
         if (!active) return;
 
