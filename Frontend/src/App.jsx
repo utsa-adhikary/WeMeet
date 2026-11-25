@@ -8,7 +8,7 @@ import {
 import { Toaster, toast } from "react-hot-toast";
 import HomePage from "./pages/HomePage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
-import MeetingPreviewPage from "./pages/MeetingPreviewPage.jsx";
+import MeetingPage from "./pages/MeetingPage.jsx";
 import { fetchApi } from "./utils/fetchApi.js";
 import AuthContext from "./contexts/AuthContext.jsx";
 
@@ -63,7 +63,7 @@ function ProtectedMeetingRoute() {
     return <Navigate to="/" replace />;
   }
 
-  return <MeetingPreviewPage />;
+  return <MeetingPage />;
 }
 
 function ProtectedLoginRoute() {
