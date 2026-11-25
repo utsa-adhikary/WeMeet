@@ -1,15 +1,19 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import GoogleIcon from "../icons/GoogleIcon.jsx";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import { fetchApi } from "../utils/fetchApi.js";
 import toast from "react-hot-toast";
+import AuthContext from "../contexts/AuthContext.jsx";
 
 export default function SignupPage({ mode = "signup" }) {
+  const navigate = useNavigate();
   const isSignIn = mode === "signin";
   const oppositeMode = isSignIn ? "signup" : "signin";
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { setLogined, setUser } = useContext(AuthContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
@@ -21,13 +25,22 @@ export default function SignupPage({ mode = "signup" }) {
       const response = await fetchApi(endPoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        credentials: "include",
         body: JSON.stringify(bodyObj),
       });
-      if (!response.success) {
-        return toast.error(response.message);
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        return toast.error(data.message);
       }
-      console.log(response);
+
+      setUser(data.user);
+      setLogined(true);
+
+      toast.success(
+        `${isSignIn ? "Login successfull." : "SignUp successfull."}`,
+      );
+      return navigate("/", { replace: true });
     } catch (error) {
       console.log(error);
     }
@@ -159,6 +172,7 @@ export default function SignupPage({ mode = "signup" }) {
           <button
             className="mb-4 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-xl border border-slate-200 bg-white px-5 text-sm font-bold text-ink transition hover:-translate-y-0.5 hover:bg-[#f8faf7] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
             type="button"
+            onClick={() => toast.error("The service currently not available")}
           >
             <GoogleIcon />
             Continue with Google

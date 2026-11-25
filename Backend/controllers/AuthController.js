@@ -1,5 +1,6 @@
 const User = require("../models/UserModel");
 const jwt = require("jsonwebtoken");
+const JWT_SECRET = process.env.JWT_SECRET;
 
 async function registerUser(req, res) {
   try {
@@ -31,6 +32,18 @@ async function registerUser(req, res) {
     });
 
     await user.save();
+
+    // 4. Sign a JWT (adjust expiry and payload to your app's needs)
+    const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
+      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
+    });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "lax",
+      // secure: process.env.NODE_ENV === "production",
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     // 4. Omit password from the response payload
     return res.status(201).json({
@@ -66,8 +79,6 @@ async function registerUser(req, res) {
   }
 }
 
-const JWT_SECRET = process.env.JWT_SECRET;
-
 async function loginUser(req, res) {
   try {
     const { email, password } = req.body;
@@ -101,10 +112,9 @@ async function loginUser(req, res) {
 
     // 4. Sign a JWT (adjust expiry and payload to your app's needs)
     const token = jwt.sign({ userId: user._id.toString() }, JWT_SECRET, {
-      expiresIn: "7d",
+      expiresIn: process.env.JWT_EXPIRES_IN || "7d",
     });
 
-    // Optional: set as an HttpOnly cookie instead of (or in addition to) returning in JSON
     res.cookie("token", token, {
       httpOnly: true,
       sameSite: "lax",
@@ -112,11 +122,9 @@ async function loginUser(req, res) {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-    // 5. Return safe user fields only (never include user.password)
     return res.status(200).json({
       success: true,
       message: "Login successful",
-      token,
       user: {
         id: user._id,
         name: user.name,
@@ -131,4 +139,21 @@ async function loginUser(req, res) {
   }
 }
 
-module.exports = { registerUser, loginUser };
+async function me(req, res) {
+  try {
+    return res.status(200).json({
+      user: {
+        id: req.userId,
+        name: req.user.name,
+        email: req.userEmail,
+      },
+    });
+  } catch (error) {
+    console.error("Error logging in:", error);
+    return res
+      .status(500)
+      .json({ success: false, message: "Internal server error" });
+  }
+}
+
+module.exports = { registerUser, loginUser, me };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import {
   createBrowserRouter,
   Navigate,
@@ -10,6 +10,7 @@ import HomePage from "./pages/HomePage.jsx";
 import SignupPage from "./pages/SignupPage.jsx";
 import MeetingPreviewPage from "./pages/MeetingPreviewPage.jsx";
 import { fetchApi } from "./utils/fetchApi.js";
+import AuthContext from "./contexts/AuthContext.jsx";
 
 function ProtectedMeetingRoute() {
   const { roomId } = useParams();
@@ -25,9 +26,13 @@ function ProtectedMeetingRoute() {
       }
 
       try {
-        const result = await fetchApi(`/api/meeting/id/${roomId}`, { method: "POST" });
+        const response = await fetchApi(`/api/meeting/id/${roomId}`, {
+          method: "POST",
+        });
 
         if (!active) return;
+
+        const result = await response.json();
 
         if (result.success) {
           setStatus("allowed");
@@ -61,6 +66,16 @@ function ProtectedMeetingRoute() {
   return <MeetingPreviewPage />;
 }
 
+function ProtectedLoginRoute() {
+  const { logined } = useContext(AuthContext);
+  return logined ? <Navigate to="/" replace /> : <SignupPage mode="signin" />;
+}
+
+function ProtectedRegisterRoute() {
+  const { logined } = useContext(AuthContext);
+  return logined ? <Navigate to="/" replace /> : <SignupPage mode="signup" />;
+}
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -72,11 +87,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/signup",
-    element: <SignupPage mode="signup" />,
+    element: <ProtectedRegisterRoute />,
   },
   {
     path: "/signin",
-    element: <SignupPage mode="signin" />,
+    element: <ProtectedLoginRoute />,
   },
   {
     path: "*",
@@ -85,8 +100,28 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  const [logined, setLogined] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    async function checkSession() {
+      try {
+        const response = await fetchApi("/api/auth/me", { method: "GET" });
+
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data.user);
+          setLogined(true);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    checkSession();
+  }, []);
+
   return (
-    <>
+    <AuthContext.Provider value={{ logined, setLogined, user, setUser }}>
       <Toaster
         position="top-center"
         toastOptions={{
@@ -123,7 +158,7 @@ function App() {
         }}
       />
       <RouterProvider router={router} />
-    </>
+    </AuthContext.Provider>
   );
 }
 

@@ -8,11 +8,13 @@ const User = require("./models/UserModel");
 // routes
 const AuthRoutes = require("./routes/AuthRoutes");
 const MeetRoutes = require("./routes/MeetingRoutes");
+const cookieParser = require("cookie-parser");
 
 const PORT = process.env.PORT;
 const MONGODB_URI = process.env.MONGODB_URI;
 
 const app = express();
+app.use(cookieParser());
 
 app.use(
   cors({
@@ -22,7 +24,7 @@ app.use(
   }),
 );
 
-app.use(express.json()); 
+app.use(express.json());
 
 app.use("/api/auth", AuthRoutes);
 app.use("/api/meeting", MeetRoutes);

@@ -2,12 +2,14 @@ import Header from "../components/Header.jsx";
 import { Link, useNavigate } from "react-router-dom";
 import { CallIllustration } from "../icons/HomePageIcons.jsx";
 import { fetchApi } from "../utils/fetchApi.js";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import toast from "react-hot-toast";
 import { validateRoomId } from "../utils/roomFunctions.js";
+import AuthContext from "../contexts/AuthContext.jsx";
 
 export default function HomePage() {
   const navigate = useNavigate();
+  const { setLogined } = useContext(AuthContext);
 
   const [userRoomId, setUserRoomId] = useState("");
 
@@ -301,11 +303,18 @@ export default function HomePage() {
         method: "POST",
       });
 
-      if (!response.success) {
-        return console.log("Unable to create meeting. Try again.");
+      const data = await response.json();
+
+      if (response.status === 401) {
+        setLogined(false);
+        return navigate("/signin");
       }
 
-      const roomId = response.roomId;
+      if (!response.ok) {
+        return toast.error(data.message);
+      }
+
+      const roomId = data.roomId;
       navigate(`/meeting/${roomId}`);
     } catch (error) {
       console.log(error);
@@ -322,11 +331,18 @@ export default function HomePage() {
         method: "POST",
       });
 
-      if (!response.success) {
-        return toast.error(response.message);
+      const data = await response.json();
+
+      if (response.status === 401) {
+        setLogined(false);
+        return navigate("/signin");
       }
 
-      navigate(`/meeting/${response.roomId}`);
+      if (!response.ok) {
+        return toast.error(data.message);
+      }
+
+      navigate(`/meeting/${data.roomId}`);
     } catch (error) {
       console.log(error);
     }
