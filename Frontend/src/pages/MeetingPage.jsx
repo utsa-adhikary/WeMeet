@@ -239,7 +239,7 @@ export default function MeetingPage() {
             </span>
           </div>
 
-          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5">
+          <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/4 px-3 py-1.5">
             <span
               aria-hidden="true"
               className="material-icons text-white/55"
@@ -293,7 +293,7 @@ export default function MeetingPage() {
                   Ready when you are
                 </span>
                 <h1
-                  className="mb-0 font-[Manrope,ui-sans-serif,system-ui] text-3xl font-semibold tracking-[-0.05em] text-ink sm:text-4xl"
+                  className="mb-0 font-[Manrope,ui-sans-serif,system-ui] text-3xl font-semibold tracking-tighter text-ink sm:text-4xl"
                   id="meeting-preview-title"
                 >
                   Check your setup
@@ -422,7 +422,7 @@ export default function MeetingPage() {
                         {participant.initials}
                       </span>
                     </span>
-                    <span className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-gradient-to-t from-black/80 via-black/35 to-transparent px-2.5 pb-2 pt-5 sm:px-3">
+                    <span className="absolute inset-x-0 bottom-0 flex items-center justify-between bg-linear-to-t from-black/80 via-black/35 to-transparent px-2.5 pb-2 pt-5 sm:px-3">
                       <span className="truncate text-[11px] font-semibold text-white sm:text-xs">
                         {participant.name}
                       </span>
@@ -447,7 +447,7 @@ export default function MeetingPage() {
             {isCallMode && (
               <div className="relative flex h-18 shrink-0 items-center justify-center border-t border-white/10 bg-[#101716] px-4 sm:px-8">
                 <div className="absolute left-5 hidden items-center gap-2 text-xs text-white/70 sm:flex">
-                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/[0.04] px-3.5 py-1.5 font-medium">
+                  <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/4 px-3.5 py-1.5 font-medium">
                     <span className="size-2 rounded-full bg-emerald-400" />
                     4 in call
                   </span>

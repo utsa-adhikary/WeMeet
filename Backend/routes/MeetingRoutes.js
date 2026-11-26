@@ -1,5 +1,5 @@
 const express = require("express");
-const MeetingController = require("../controllers/Meetingontroller");
+const MeetingController = require("../controllers/MeetingController");
 const { requireAuth } = require("../middlewares/Authorization");
 
 const router = express.Router();
