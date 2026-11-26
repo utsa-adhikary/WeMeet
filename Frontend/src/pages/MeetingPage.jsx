@@ -1,7 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { toggleCamera, toggleMic } from "../hooks/streamMedia";
 import toast from "react-hot-toast";
+import AuthContext from "../contexts/AuthContext.jsx";
+import Header from "../components/Header.jsx";
 
 const sampleParticipants = [
   { name: "Maya", initials: "M", background: "bg-[#3a334a]" },
@@ -11,6 +13,7 @@ const sampleParticipants = [
 
 export default function MeetingPage() {
   const { roomId } = useParams();
+  const { user } = useContext(AuthContext);
   const videoRef = useRef(null);
   const streamRef = useRef(null);
   const mountedRef = useRef(true);
@@ -26,9 +29,9 @@ export default function MeetingPage() {
       ? "Camera unavailable"
       : "Camera off",
   );
-  const [name, setName] = useState("");
   const [joining, setJoining] = useState(false);
   const [isCallMode, setIsCallMode] = useState(false);
+  const name = user?.name?.trim() || "You";
 
   useEffect(() => {
     mountedRef.current = true;
@@ -76,6 +79,7 @@ export default function MeetingPage() {
       <>
         <button
           aria-label={cameraEnabled ? "Turn camera off" : "Turn camera on"}
+          aria-busy={cameraBusy}
           aria-pressed={cameraEnabled}
           className={`grid size-12 place-items-center rounded-full shadow-lg transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-60 ${
             isCallMode
@@ -99,16 +103,24 @@ export default function MeetingPage() {
           }
           type="button"
         >
-          <span
-            aria-hidden="true"
-            className="material-icons"
-            style={{ fontSize: "20px" }}
-          >
-            {cameraEnabled ? "videocam" : "videocam_off"}
-          </span>
+          {cameraBusy ? (
+            <span
+              aria-hidden="true"
+              className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="material-icons"
+              style={{ fontSize: "20px" }}
+            >
+              {cameraEnabled ? "videocam" : "videocam_off"}
+            </span>
+          )}
         </button>
         <button
           aria-label={micEnabled ? "Mute microphone" : "Unmute microphone"}
+          aria-busy={micBusy}
           aria-pressed={micEnabled}
           className={`grid size-12 place-items-center rounded-full shadow-lg transition hover:-translate-y-0.5 disabled:cursor-wait disabled:opacity-60 ${
             isCallMode
@@ -131,14 +143,37 @@ export default function MeetingPage() {
           }
           type="button"
         >
-          <span
-            aria-hidden="true"
-            className="material-icons"
-            style={{ fontSize: "20px" }}
-          >
-            {micEnabled ? "mic" : "mic_off"}
-          </span>
+          {micBusy ? (
+            <span
+              aria-hidden="true"
+              className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+            />
+          ) : (
+            <span
+              aria-hidden="true"
+              className="material-icons"
+              style={{ fontSize: "20px" }}
+            >
+              {micEnabled ? "mic" : "mic_off"}
+            </span>
+          )}
         </button>
+        {!isCallMode && (
+          <Link
+            aria-label="Leave preview"
+            className="grid size-12 place-items-center rounded-full bg-[#d7463f] text-white shadow-lg transition hover:bg-[#bd3530] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#d7463f]"
+            title="Leave preview"
+            to="/"
+          >
+            <span
+              aria-hidden="true"
+              className="material-icons"
+              style={{ fontSize: "20px" }}
+            >
+              logout
+            </span>
+          </Link>
+        )}
         {isCallMode && (
           <button
             aria-label="End call and return to preview"
@@ -163,13 +198,12 @@ export default function MeetingPage() {
     typeof window === "undefined"
       ? ""
       : `${window.location.origin}/meeting/${roomId}`;
-  const initials =
-    name
-      .trim()
-      .split(/\s+/)
-      .slice(0, 2)
-      .map((part) => part[0]?.toUpperCase())
-      .join("") || "YOU";
+  const initials = name
+    .trim()
+    .split(/\s+/)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
 
   return (
     <div
@@ -186,23 +220,15 @@ export default function MeetingPage() {
         />
       )}
 
-      <header
-        className={`relative z-10 flex h-16 w-full items-center justify-between px-5 sm:px-8 ${
-          isCallMode
-            ? "border-b border-white/10 bg-[#151b1e]"
-            : "mx-auto max-w-6xl"
-        }`}
-      >
-        <Link
-          aria-label="WeMeet home"
-          className={`text-[22px] font-bold tracking-[-0.06em] ${
-            isCallMode ? "text-white" : "text-ink"
-          }`}
-          to="/"
-        >
-          WeMeet
-        </Link>
-        {isCallMode ? (
+      {isCallMode ? (
+        <header className="relative z-10 flex h-16 w-full items-center justify-between border-b border-white/10 bg-[#151b1e] px-5 sm:px-8">
+          <Link
+            aria-label="WeMeet home"
+            className="text-[22px] font-bold tracking-[-0.06em] text-white"
+            to="/"
+          >
+            WeMeet
+          </Link>
           <div className="flex items-center gap-2 rounded-xl border border-white/10 bg-white/5 px-3 py-2">
             <span
               aria-hidden="true"
@@ -232,15 +258,10 @@ export default function MeetingPage() {
               </span>
             </button>
           </div>
-        ) : (
-          <Link
-            className="inline-flex min-h-10 items-center justify-center rounded-lg px-3 text-xs font-bold text-slate-600 transition hover:bg-white/70 hover:text-brand"
-            to="/"
-          >
-            Leave preview
-          </Link>
-        )}
-      </header>
+        </header>
+      ) : (
+        <Header />
+      )}
 
       <main
         className={
@@ -317,7 +338,7 @@ export default function MeetingPage() {
               <div className="absolute inset-x-0 top-0 flex items-start justify-between p-3 sm:p-4">
                 <div className="flex flex-col gap-1">
                   <span className="rounded-full bg-[#111719]/75 px-3 py-1.5 text-xs font-semibold text-white backdrop-blur">
-                    {name.trim() || (isCallMode ? "You" : "Your preview")}
+                    {name}
                   </span>
                   {isCallMode && (
                     <span className="pl-1 text-[10px] text-white/60">
@@ -420,31 +441,42 @@ export default function MeetingPage() {
             Make sure your camera and microphone are just how you like them.
           </p>
 
-          <label
-            className="mb-2 block text-xs font-bold text-slate-700"
-            htmlFor="preview-name"
+          <div
+            aria-label={`Joining as ${name}`}
+            className="mb-5 flex items-center gap-3 rounded-xl border border-[#e5e9df] bg-[#fbfcf9] px-4 py-3"
           >
-            Your name
-          </label>
-          <input
-            autoComplete="name"
-            className="page-input mb-5 text-sm"
-            id="preview-name"
-            name="name"
-            placeholder="Enter your name"
-            type="text"
-            value={name}
-            onChange={(event) => setName(event.target.value)}
-          />
+            <span
+              aria-hidden="true"
+              className="grid size-10 shrink-0 place-items-center rounded-full bg-[#e7f2e8] text-xs font-bold text-brand"
+            >
+              {initials}
+            </span>
+            <span className="min-w-0">
+              <span className="block text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">
+                Joining as
+              </span>
+              <span className="block truncate text-sm font-bold text-ink">
+                {name}
+              </span>
+            </span>
+          </div>
 
           <button
             className="inline-flex min-h-12 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark disabled:cursor-wait disabled:opacity-70"
+            aria-busy={joining}
+            aria-label={joining ? "Joining call" : undefined}
             disabled={joining}
             onClick={joinMeeting}
             type="button"
           >
-            {joining ? "Joining..." : "Join now"}
-            {!joining && (
+            {joining ? (
+              <span
+                aria-hidden="true"
+                className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+              />
+            ) : (
+              <>
+                Join now
               <span
                 aria-hidden="true"
                 className="material-icons"
@@ -452,6 +484,7 @@ export default function MeetingPage() {
               >
                 arrow_forward
               </span>
+              </>
             )}
           </button>
 

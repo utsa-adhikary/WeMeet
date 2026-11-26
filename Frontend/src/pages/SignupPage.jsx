@@ -12,11 +12,14 @@ export default function SignupPage({ mode = "signup" }) {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [submitting, setSubmitting] = useState(false);
 
   const { setLogined, setUser } = useContext(AuthContext);
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (submitting) return;
+    setSubmitting(true);
     const endPoint = isSignIn ? "/api/auth/login" : "/api/auth/register";
 
     try {
@@ -43,6 +46,8 @@ export default function SignupPage({ mode = "signup" }) {
       return navigate("/", { replace: true });
     } catch (error) {
       console.log(error);
+    } finally {
+      setSubmitting(false);
     }
   }
 
@@ -251,20 +256,36 @@ export default function SignupPage({ mode = "signup" }) {
           </div>
 
           <button
-            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+            aria-busy={submitting}
+            aria-label={
+              submitting
+                ? isSignIn
+                  ? "Signing in"
+                  : "Creating account"
+                : undefined
+            }
+            className="mt-4 inline-flex min-h-11 w-full items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.18)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:pointer-events-none disabled:opacity-80"
+            disabled={submitting}
             type="button"
-            onClick={(e) => {
-              handleSubmit(e);
-            }}
+            onClick={handleSubmit}
           >
-            {isSignIn ? "Sign in" : "Create account"}
-            <span
-              aria-hidden="true"
-              className="material-icons"
-              style={{ fontSize: "16px" }}
-            >
-              arrow_forward
-            </span>
+            {submitting ? (
+              <span
+                aria-hidden="true"
+                className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+              />
+            ) : (
+              <>
+                {isSignIn ? "Sign in" : "Create account"}
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
+                  arrow_forward
+                </span>
+              </>
+            )}
           </button>
           <p className="mb-0 mt-3 text-center text-[10px] leading-4 text-muted">
             Preview only; authentication isn’t connected yet.

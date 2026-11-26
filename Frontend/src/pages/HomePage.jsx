@@ -9,9 +9,10 @@ import AuthContext from "../contexts/AuthContext.jsx";
 
 export default function HomePage() {
   const navigate = useNavigate();
-  const { setLogined } = useContext(AuthContext);
+  const { logined, setLogined } = useContext(AuthContext);
 
   const [userRoomId, setUserRoomId] = useState("");
+  const [loadingAction, setLoadingAction] = useState(null); // "start" | "join" | null
 
   function renderCallPreview() {
     return (
@@ -196,18 +197,30 @@ export default function HomePage() {
               }}
             />
             <button
-              className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
+              className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-brand px-5 text-sm font-bold text-white transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:pointer-events-none disabled:opacity-80"
+              disabled={Boolean(loadingAction)}
+              aria-busy={loadingAction === "join"}
+              aria-label={loadingAction === "join" ? "Joining call" : undefined}
               type="button"
               onClick={() => joinRoom(userRoomId)}
             >
-              Join call
-              <span
-                aria-hidden="true"
-                className="material-icons"
-                style={{ fontSize: "16px" }}
-              >
-                arrow_forward
-              </span>
+              {loadingAction === "join" ? (
+                <span
+                  aria-hidden="true"
+                  className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent"
+                />
+              ) : (
+                <>
+                  Join call
+                  <span
+                    aria-hidden="true"
+                    className="material-icons"
+                    style={{ fontSize: "16px" }}
+                  >
+                    arrow_forward
+                  </span>
+                </>
+              )}
             </button>
           </div>
         </div>
@@ -298,7 +311,9 @@ export default function HomePage() {
   }
 
   async function startCall() {
+    if (loadingAction) return;
     try {
+      setLoadingAction("start");
       const response = await fetchApi("/api/meeting/create", {
         method: "POST",
       });
@@ -318,15 +333,19 @@ export default function HomePage() {
       navigate(`/meeting/${roomId}`);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingAction(null);
     }
   }
 
   async function joinRoom(userRoomId) {
-    try {
-      if (!validateRoomId(userRoomId)) {
-        return toast.error("Invalid room Id");
-      }
+    if (loadingAction) return;
+    if (!validateRoomId(userRoomId)) {
+      return toast.error("Invalid room Id");
+    }
 
+    try {
+      setLoadingAction("join");
       const response = await fetchApi(`/api/meeting/id/${userRoomId}`, {
         method: "POST",
       });
@@ -345,6 +364,8 @@ export default function HomePage() {
       navigate(`/meeting/${data.roomId}`);
     } catch (error) {
       console.log(error);
+    } finally {
+      setLoadingAction(null);
     }
   }
 
@@ -372,19 +393,30 @@ export default function HomePage() {
               distance feel a little smaller — one call at a time.
             </p>
             <div className="flex flex-wrap items-center gap-3">
-              <Link
-                className="inline-flex min-h-12 items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.2)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                onClick={() => startCall()}
+              <button
+                className="inline-flex min-h-12 min-w-36 items-center justify-center gap-3 rounded-xl bg-brand px-5 text-sm font-bold text-white shadow-[0_8px_20px_rgba(21,123,104,0.2)] transition hover:-translate-y-0.5 hover:bg-brand-dark focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand disabled:pointer-events-none disabled:opacity-80"
+                disabled={loadingAction === "start"}
+                onClick={startCall}
+                type="button"
               >
-                Start a call
-                <span
-                  aria-hidden="true"
-                  className="material-icons"
-                  style={{ fontSize: "16px" }}
-                >
-                  arrow_forward
-                </span>
-              </Link>
+                {loadingAction === "start" ? (
+                  <span
+                    aria-label="Starting call"
+                    className="size-5 animate-spin rounded-full border-2 border-white/30 border-t-white"
+                  />
+                ) : (
+                  <>
+                    Start a call
+                    <span
+                      aria-hidden="true"
+                      className="material-icons"
+                      style={{ fontSize: "16px" }}
+                    >
+                      arrow_forward
+                    </span>
+                  </>
+                )}
+              </button>
               <Link
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-ink transition hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
                 to="#how-it-works"
@@ -446,19 +478,46 @@ export default function HomePage() {
                 Make today a little more together.
               </h2>
             </div>
-            <Link
-              className="relative inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-xl bg-white px-5 text-sm font-bold text-[#173b32] transition hover:-translate-y-0.5 hover:bg-[#eff5ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
-              to="/signup"
-            >
-              Get started
-              <span
-                aria-hidden="true"
-                className="material-icons"
-                style={{ fontSize: "16px" }}
+            {logined ? (
+              <button
+                className="relative inline-flex min-h-12 min-w-36 shrink-0 items-center justify-center gap-3 rounded-xl bg-white px-5 text-sm font-bold text-[#173b32] transition hover:-translate-y-0.5 hover:bg-[#eff5ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white disabled:pointer-events-none disabled:opacity-80"
+                disabled={loadingAction === "start"}
+                onClick={startCall}
+                type="button"
               >
-                arrow_forward
-              </span>
-            </Link>
+                {loadingAction === "start" ? (
+                  <span
+                    aria-label="Starting call"
+                    className="size-5 animate-spin rounded-full border-2 border-[#173b32]/25 border-t-[#173b32]"
+                  />
+                ) : (
+                  <>
+                    Start a call
+                    <span
+                      aria-hidden="true"
+                      className="material-icons"
+                      style={{ fontSize: "16px" }}
+                    >
+                      arrow_forward
+                    </span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <Link
+                className="relative inline-flex min-h-12 shrink-0 items-center justify-center gap-3 rounded-xl bg-white px-5 text-sm font-bold text-[#173b32] transition hover:-translate-y-0.5 hover:bg-[#eff5ed] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                to="/signup"
+              >
+                Get started
+                <span
+                  aria-hidden="true"
+                  className="material-icons"
+                  style={{ fontSize: "16px" }}
+                >
+                  arrow_forward
+                </span>
+              </Link>
+            )}
           </div>
         </section>
       </main>

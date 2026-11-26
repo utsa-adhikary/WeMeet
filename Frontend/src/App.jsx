@@ -56,7 +56,7 @@ function ProtectedMeetingRoute() {
   }, [roomId]);
 
   if (status === "checking") {
-    return <div className="p-6 text-center">Verifying meeting room...</div>;
+    return null;
   }
 
   if (status === "denied") {
