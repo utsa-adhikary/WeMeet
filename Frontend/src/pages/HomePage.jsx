@@ -417,9 +417,9 @@ export default function HomePage() {
                   </>
                 )}
               </button>
-              <Link
+              <a
                 className="inline-flex min-h-12 items-center justify-center gap-2 rounded-xl px-4 text-sm font-bold text-ink transition hover:bg-white/70 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
-                to="#how-it-works"
+                href="#how-it-works"
               >
                 How it works
                 <span
@@ -429,7 +429,7 @@ export default function HomePage() {
                 >
                   keyboard_arrow_down
                 </span>
-              </Link>
+              </a>
             </div>
             <div className="mt-8 flex items-center gap-3 text-xs text-muted">
               <span className="flex -space-x-2">
